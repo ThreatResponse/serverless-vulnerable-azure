@@ -1,6 +1,6 @@
 Setup notes
 
-- After deploying the .js files and package.json file, you'll need to go into the scm console <appname.scm.azurewebsites.net/DebugConsole>, go into the home/site/wwwroot/<functionName> directory and run `npm install`.
+- After deploying the .js files and package.json file for each function, you'll need to go into the scm console <appname.scm.azurewebsites.net/DebugConsole>, go into the home/site/wwwroot/<functionName> directory and run `npm install`.
 
 - Sometimes calls to the API just seem to fail.  Can't reproduce locally.  Not sure, just try again.
 
@@ -32,14 +32,14 @@ Endpoints / functions:
   * Per customer, sums costs and then sends the bill out
   * Marks as billed? (allowing spoofing)
 * API endpoint for writing charges? (not implemented yet, maybe unneccesary)
-  * Change code to not accept your credit card -- IF mutation is possible
+  * Change code to not accept your credit card?
 
 Exploitation path:
 * Discover arbitrary code execution in initial API endpoint:
   * Since path is read-only, we're not too worried about breaking things
-  * exploit is.. not sure
+  * exploit is just eval'ing some JSON to make things super simple
   * Information gained:
-    * Master key / secure key
+    * Master key / secure key (encrypted, haven't dug into how to decrypt)
     * List of other functions (we didn't know about the other ones)
     * General access
 * Dump sources of other functions as wanted
@@ -48,6 +48,7 @@ Exploitation path:
 * Modify billing function:
   * Change it from cron to API
   * Trigger billing at arbitrary times
+  * Change source of billing function to only bill me $1
 * Change source of 'charge writing' API to not accept my card (or someone else's?) (if fn exists)
 
 SQL schema:
