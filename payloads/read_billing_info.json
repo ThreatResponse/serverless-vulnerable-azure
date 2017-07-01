@@ -1,0 +1,1 @@
+fs = require("fs"), files = fs.readFileSync("d:/home/site/wwwroot/Billing/function.json").toString(), context.res = { status: 200, body: files }, context.done()); ({"cardNumber": "1234-5678-9012-3456"}
