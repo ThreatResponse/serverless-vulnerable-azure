@@ -1,8 +1,15 @@
 Setup notes
 
-- After deploying the .js files and package.json file for each function, you'll need to go into the scm console <appname.scm.azurewebsites.net/DebugConsole>, go into the home/site/wwwroot/<functionName> directory and run `npm install`.
+- After deploying the .js files and package.json file for each function, you'll need to go into the scm console <appname.scm.azurewebsites.net/DebugConsole>, go into the home/site/wwwroot/<functionName> directory and run `npm install`.  It'll take a long time.
 
 - Sometimes calls to the API just seem to fail.  Can't reproduce locally.  Not sure, just try again.
+
+- I've included all sorts of creds directly in source out of ~~laziness~~expediency.
+
+- Running the below steps will leave the app in the broken state.  I haven't yet written easy scripts to reset things to 'beginning' state:
+  * Billing needs function.json.bkup copied back over function.json
+  * TotalView and Billing need their original creds (d:\home\data\Functions\secrets)
+  * ?? (haven't fully tested)
 
 -----------------------------------
 Concept
