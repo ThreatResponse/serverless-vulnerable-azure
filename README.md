@@ -9,6 +9,7 @@ Setup notes
 - Running the below steps will leave the app in the broken state.  I haven't yet written easy scripts to reset things to 'beginning' state:
   * Billing needs function.json.bkup copied back over function.json
   * TotalView and Billing need their original creds (d:\home\data\Functions\secrets)
+  * Billing needs its original code (or just the offending line removed)
   * ?? (haven't fully tested)
 
 -----------------------------------
